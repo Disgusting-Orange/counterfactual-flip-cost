@@ -1,0 +1,9 @@
+Metric,Score-only,Pool + diverse,Flip-based diverse
+validity,100.000,100.000,100.000
+diversity,0.060,0.077,0.077
+cost,5.593,6.257,6.257
+top1_acc,0.000,0.000,0.000
+best_k_acc,0.000,0.000,0.000
+coverage,0.927,0.930,0.930
+expansions,546.680,546.680,2186.720
+runtime_ms,16.297,16.580,52.291

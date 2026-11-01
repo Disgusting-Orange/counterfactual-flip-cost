@@ -1,0 +1,6 @@
+Noise Model,Setting / Sigma,Flip-Cost AUROC,Timestamp Margin AUROC,Probabilistic AUROC,Paired Diff (Flip - Margin),95% CI Low,95% CI High
+Gaussian Jitter,1.0,0.856,0.855,0.593,0.002,-0.024,0.028
+Gaussian Jitter,1.5,0.849,0.856,0.585,-0.007,-0.029,0.014
+Gaussian Jitter,2.0,0.832,0.847,0.595,-0.014,-0.037,0.007
+Gaussian Jitter,4.0,0.801,0.740,0.583,0.061,0.030,0.092
+Structured Multi-Host Skew,"4 Hosts, Offset=4s, Quant=1s",0.835,0.830,0.605,0.006,-0.021,0.031
