@@ -13,6 +13,8 @@
 \usepackage{microtype}
 \usepackage{balance}
 
+\DeclareMathOperator{\pos}{pos}
+
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
 \newtheorem{definition}{Definition}
@@ -21,8 +23,8 @@
 
 \title{Counterfactual Flip-Cost Analysis: Quantifying Pairwise Ordering Ambiguity in Precedence-Constrained Security Timelines}
 
-\author{Varun~Dubey and Kamalesh~N%
-\thanks{The authors are with the School of Computer Science and Engineering, Vellore Institute of Technology, Chennai 600127, Tamil Nadu, India (e-mail: varun.dubey2024@vitstudent.ac.in, kamalesh.n2024@vitstudent.ac.in).}}
+\author{KAMALESH~N.$^{1}$, AND VARUN~DUBEY$^{1}$%
+\thanks{The authors are with the School of Computer Science and Engineering, Vellore Institute of Technology, Chennai Campus, Chennai 600127, Tamil Nadu, India (e-mail: kamalesh.n2024@vitstudent.ac.in, varun.dubey2024@vitstudent.ac.in).}}
 
 \maketitle
 
@@ -31,7 +33,7 @@ Reconstructing attack timelines from heterogeneous security event logs is freque
 \end{abstract}
 
 \begin{IEEEkeywords}
-Digital forensics, incident timeline reconstruction, partial orders, linear extensions, counterfactual analysis, Kendall-tau distance, heuristic search, ordering ambiguity.
+Counterfactual analysis, digital forensics, heuristic search, incident timeline reconstruction, Kendall-tau distance, linear extensions, ordering ambiguity, partial orders.
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -167,9 +169,9 @@ Invariant causal, physical, and provenance dependencies among events are represe
 \end{definition}
 
 \begin{definition}[Valid Timeline as a Linear Extension]
-A timeline $\pi$ is a bijection $\pi: \{1, \dots, n\} \to V$, commonly represented as a permutation $(v_{\pi(1)}, \dots, v_{\pi(n)})$, where $pos_\pi(v)$ denotes the position of event $v$. A timeline $\pi$ is constraint-valid if and only if it preserves all precedence constraints in $G$:
+A timeline $\pi$ is a bijection $\pi: \{1, \dots, n\} \to V$, commonly represented as a permutation $(v_{\pi(1)}, \dots, v_{\pi(n)})$, where $\pos_\pi(v)$ denotes the position of event $v$. A timeline $\pi$ is constraint-valid if and only if it preserves all precedence constraints in $G$:
 \begin{equation}
-pos_\pi(u) < pos_\pi(v), \quad \forall (u, v) \in E
+\pos_\pi(u) < \pos_\pi(v), \quad \forall (u, v) \in E
 \end{equation}
 The set of all valid timelines constitutes the set of linear extensions of the poset, denoted $\mathcal{L}(G)$.
 \end{definition}
@@ -184,7 +186,7 @@ P_{free} = \{(u, v) \in V \times V \mid u \neq v, \, (u, v) \notin E^+, \, (v, u
 \subsection{Kendall-Tau Inversion Cost Objective}
 For any linear extension $\pi \in \mathcal{L}(G)$, its reconstruction cost $c(\pi)$ is the number of pairwise inversions with respect to the timestamp reference order $\pi_\tau$ \cite{Kendall1938}:
 \begin{equation}
-c(\pi) = \sum_{1 \le i < j \le n} \mathbf{1}\left[ \left( pos_{\pi_\tau}(v_i) - pos_{\pi_\tau}(v_j) \right) \cdot \left( pos_\pi(v_i) - pos_\pi(v_j) \right) < 0 \right]
+c(\pi) = \sum_{1 \le i < j \le n} \mathbf{1}\left[ \left( \pos_{\pi_\tau}(v_i) - \pos_{\pi_\tau}(v_j) \right) \cdot \left( \pos_\pi(v_i) - \pos_\pi(v_j) \right) < 0 \right]
 \end{equation}
 where $\mathbf{1}[\cdot]$ is the indicator function. The baseline reconstruction problem is to find an optimal linear extension $\pi^*$ minimizing this disagreement:
 \begin{equation}
@@ -258,10 +260,10 @@ The system architecture is illustrated in Fig.~\ref{fig:architecture}.
 \subsection{Bounded Best-First Search (A*) with Dominance Pruning}
 A search state is defined as $s = (P, U, R)$, where $P$ is the placed prefix, $U \subseteq V$ is the set of placed vertices, and $R = V \setminus U$ is the set of unplaced vertices. An unplaced vertex $w \in R$ is admissible to append to $P$ if $\text{Pred}_G(w) \subseteq U$.
 
-The evaluation function is $f(s) = g(s) + h(s)$. Appending $w$ incurs incremental cost $\Delta g(P, w) = \sum_{u \in P} \mathbf{1}\left[ pos_{\pi_\tau}(u) > pos_{\pi_\tau}(w) \right]$.
+The evaluation function is $f(s) = g(s) + h(s)$. Appending $w$ incurs incremental cost $\Delta g(P, w) = \sum_{u \in P} \mathbf{1}\left[ \pos_{\pi_\tau}(u) > \pos_{\pi_\tau}(w) \right]$.
 We formulate the remaining heuristic as:
 \begin{equation}
-h(s) = \sum_{u, v \in R, \, u \neq v} \mathbf{1}\left[ (u, v) \in E^+ \land pos_{\pi_\tau}(u) > pos_{\pi_\tau}(v) \right]
+h(s) = \sum_{u, v \in R, \, u \neq v} \mathbf{1}\left[ (u, v) \in E^+ \land \pos_{\pi_\tau}(u) > \pos_{\pi_\tau}(v) \right]
 \end{equation}
 
 \begin{theorem}[Admissibility and Monotonicity of $h(s)$]
@@ -269,7 +271,7 @@ The heuristic function $h(s)$ is strictly admissible and monotonic.
 \end{theorem}
 
 \begin{proof}
-For any pair $u, v \in R$ with $(u, v) \in E^+$, any valid completion extending state $s$ must place $u$ before $v$. If $pos_{\pi_\tau}(u) > pos_{\pi_\tau}(v)$, an inversion is mathematically guaranteed to occur. Because $h(s)$ counts only guaranteed inversions strictly forced by the transitive closure $E^+$, we have $0 \le h(s) \le h^*(s)$. Monotonicity follows as forced pairs in $h(s)$ systematically transfer into $g(s)$ as vertices move from $R$ to $U$.
+For any pair $u, v \in R$ with $(u, v) \in E^+$, any valid completion extending state $s$ must place $u$ before $v$. If $\pos_{\pi_\tau}(u) > \pos_{\pi_\tau}(v)$, an inversion is mathematically guaranteed to occur. Because $h(s)$ counts only guaranteed inversions strictly forced by the transitive closure $E^+$, we have $0 \le h(s) \le h^*(s)$. Monotonicity follows as forced pairs in $h(s)$ systematically transfer into $g(s)$ as vertices move from $R$ to $U$.
 \end{proof}
 
 \begin{lemma}[Prefix Dominance]
@@ -277,7 +279,7 @@ Let $s_1 = (P_1, U, R)$ and $s_2 = (P_2, U, R)$ be two partial search states con
 \end{lemma}
 
 \begin{proof}
-An inversion between $U$ and $w$ occurs if and only if $pos_{\pi_\tau}(u) > pos_{\pi_\tau}(w)$ for $u \in U$. The cardinality of this set depends solely on the membership of $U$, not on the internal ordering of $P_1$ or $P_2$. Thus $c(P_1 \circ \pi_R) - g(s_1) = c(P_2 \circ \pi_R) - g(s_2)$. If $g(s_1) \le g(s_2)$, $s_1$ always achieves equal or lower total cost for any completion $\pi_R$.
+An inversion between $U$ and $w$ occurs if and only if $\pos_{\pi_\tau}(u) > \pos_{\pi_\tau}(w)$ for $u \in U$. The cardinality of this set depends solely on the membership of $U$, not on the internal ordering of $P_1$ or $P_2$. Thus $c(P_1 \circ \pi_R) - g(s_1) = c(P_2 \circ \pi_R) - g(s_2)$. If $g(s_1) \le g(s_2)$, $s_1$ always achieves equal or lower total cost for any completion $\pi_R$.
 \end{proof}
 
 Algorithm~\ref{alg:search} details the bounded A* search procedure.
@@ -307,7 +309,7 @@ Algorithm~\ref{alg:search} details the bounded A* search procedure.
     \EndIf
     \State $Expansions \gets Expansions + 1$
     \State $Available \gets \{w \in unplaced \mid \text{Pred}_G(w) \subseteq placed\_set\}$
-    \State Sort $Available$ by $pos_{\pi_\tau}(w)$ ascending
+    \State Sort $Available$ by $\pos_{\pi_\tau}(w)$ ascending
     \For{$w \in Available$}
         \State $new\_prefix \gets prefix + (w)$; $new\_placed \gets placed\_set \cup \{w\}$
         \State $new\_g \gets g + \Delta g(prefix, w)$
@@ -332,7 +334,7 @@ Algorithm~\ref{alg:search} details the bounded A* search procedure.
 \subsection{Diversity-Aware Candidate Selection}
 To expose structurally diverse timelines, we define the normalized free-pair disagreement distance between two linear extensions $\pi_i, \pi_j$:
 \begin{equation}
-d_{free}(\pi_i, \pi_j) = \frac{\sum_{(u, v) \in P_{free}} \mathbf{1}\left[ (pos_{\pi_i}(u) < pos_{\pi_i}(v)) \neq (pos_{\pi_j}(u) < pos_{\pi_j}(v)) \right]}{|P_{free}|}
+d_{free}(\pi_i, \pi_j) = \frac{\sum_{(u, v) \in P_{free}} \mathbf{1}\left[ (\pos_{\pi_i}(u) < \pos_{\pi_i}(v)) \neq (\pos_{\pi_j}(u) < \pos_{\pi_j}(v)) \right]}{|P_{free}|}
 \end{equation}
 Farthest-First Traversal begins with the lowest-cost solution $\pi^*$ and iteratively appends the candidate maximizing $\min_{s \in S} d_{free}(\pi, s)$.
 
@@ -344,6 +346,8 @@ Topological validation requires $O(|V| + |E|)$ time, transitive closure precompu
 
 \section{Experimental Setup}
 \label{sec:experimental_setup}
+
+All benchmarking algorithms, synthetic poset generators, noise distortion models, and unit test suites are open-sourced for reproducibility at \url{https://github.com/Disgusting-Orange/counterfactual-flip-cost}.
 
 \subsection{Benchmark Poset Generation}
 Benchmark incident graphs are generated by sampling ground-truth sequences $\pi_{true}$ with exponential inter-arrival times ($\lambda = 0.5$) and assigning precedence edges with density $p_{edge} \in [0.15, 0.35]$ strictly preserving causality. Graph sizes range from $n = 10$ to $n = 50$. Small instances ($n \le 10$) are verified against exhaustive brute-force search over all $n!$ permutations.
@@ -473,6 +477,7 @@ This paper presented a counterfactual flip-cost framework to quantify pairwise o
 
 Future work will evaluate real-world provenance logs (DARPA OpTC), investigate state-reuse across counterfactual searches to achieve near-constant query times, and integrate sensitivity heatmaps into commercial SIEM platforms.
 
+\balance
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 

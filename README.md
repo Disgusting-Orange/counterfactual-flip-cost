@@ -1,6 +1,10 @@
 # Counterfactual Flip-Cost Analysis: Quantifying Pairwise Ordering Ambiguity in Precedence-Constrained Security Timelines
 
-Official reference implementation and reproducibility benchmark suite for the paper:
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![IEEE Access](https://img.shields.io/badge/Target-IEEE%20Access-orange.svg)](https://ieeeaccess.ieee.org/)
+
+Official reference implementation, reproducibility benchmark suite, and LaTeX manuscript for the paper:
 > **Counterfactual Flip-Cost Analysis: Quantifying Pairwise Ordering Ambiguity in Precedence-Constrained Security Timelines**  
 > *Authors: Kamalesh N., Varun Dubey*  
 > *School of Computer Science and Engineering, Vellore Institute of Technology, Chennai, India*  
